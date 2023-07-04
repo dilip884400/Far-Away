@@ -1,49 +1,42 @@
-import {useState} from 'react'
-
-const messages = [
-  "Learn React ⚛️",
-  "Apply for jobs 💼",
-  "Invest your new income 🤑",
-];
+import { useState } from "react";
+import Logo from "./Logo";
+import Form from "./Form";
+import PackingList from "./PackingList";
+import Status from "./Status";
 
 export default function App(){
+  const [item, setItem] = useState([]);
 
-  const [step, setStep] = useState(1);
-  const [isOpen, setIsOpen] = useState(true)
+    function handleAddItem(item) {
+      setItem((items) => [...items, item]);
+    }
+
+     function handleDeleteItem(id){
+           setItem((item) => item.filter((item) => item.id!==id))
+     }
+
+     function handleToggleItem(id){
+      setItem((item) => item.map((item) => item.id ===id ? {...item, packed: !item.packed} : item ))
+     }
+
+       function handleClearAll() {
+        const confirmed = window.confirm("are you sure you want to delete all")
+
+          if(confirmed) setItem([]);
+       }
 
   return (
-    <>
-      <button className="close" onClick={() => setIsOpen((isOpen) => !isOpen)}>
-        &times;
-      </button>
-      {isOpen && (
-        <div className="steps">
-          <div className="numbers">
-            <div className={step >= 1 ? "active" : ""}>1</div>
-            <div className={step >= 2 ? "active" : ""}>2</div>
-            <div className={step >= 3 ? "active" : ""}>3</div>
-          </div>
-          <p className="message">
-            {step}:{messages[step - 1]}
-          </p>
-          <div className="buttons">
-            <button
-              style={{ backgroundColor: "purple" }}
-              onClick={() => step > 1 && setStep((step) => step - 1)}
-            >
-              Previous
-            </button>
-            <button
-              style={{ backgroundColor: "purple" }}
-              onClick={() =>
-                step < messages.length && setStep((step) => step + 1)
-              }
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
-    </>
+    <div className="app">
+      <Logo />
+      <Form onAddItems={handleAddItem} />
+      <PackingList
+        item={item}
+        onDeleteIem={handleDeleteItem}
+        onToggleItem={handleToggleItem}
+        onClearAll={handleClearAll}
+      />
+      <Status item={item} />
+    </div>
   );
 }
+
